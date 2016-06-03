@@ -1,4 +1,7 @@
 ConsoleApplication2.VC.VC.opendb
 ConsoleApplication2.VC.db
-ConsoleApplication2/Debug
-ipch
+ConsoleApplication2/Debug/
+ipch/
+ConsoleApplication1/bin/
+ConsoleApplication1/obj/
+ConsoleApplication1/Properties/
