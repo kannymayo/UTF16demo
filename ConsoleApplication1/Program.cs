@@ -15,11 +15,11 @@ namespace ConsoleApplication1
         {
             var jsonString = System.IO.File.ReadAllText(@"C:\Users\t_liz\documents\visual studio 2015\Projects\ConsoleApplication2\ConsoleApplication1\TextFile1.json");
             var o = JObject.Parse(jsonString);
-            transformToPXmlTable(o);
+            var z = transformToPXmlTable(o);
             
-            var z = pXMLTable.LoadFromFile(@"C:\Users\t_liz\Documents\visual studio 2015\Projects\WindowsFormsApplication4\WindowsFormsApplication4\XMLFile1.xml");
+            //var z = pXMLTable.LoadFromFile(@"C:\Users\t_liz\Documents\visual studio 2015\Projects\WindowsFormsApplication4\WindowsFormsApplication4\XMLFile1.xml");
             
-            //z.SaveToFile(@"C:\Users\t_liz\Documents\visual studio 2015\Projects\WindowsFormsApplication4\WindowsFormsApplication4\wtf.xml");
+            z.SaveToFile(@"C:\Users\t_liz\Documents\visual studio 2015\Projects\WindowsFormsApplication4\WindowsFormsApplication4\reconstructed.xml");
             var t = 1 + 1;
         }
 
@@ -114,24 +114,65 @@ namespace ConsoleApplication1
                 columnConstList.index = Convert.ToByte(Int32.Parse(attrSeq[6]));
                 columnConstList.desc = kvp.Key;
 
-                // reconstruct rows
+                // reconstruct items
                 string[] entries = ((JArray)kvp.Value.SelectToken("entries")).ToObject<string[]>();
                 for (int i = 0; i < entries.Length; i++)
                 {
-                    var row = new pXMLTableColumnRow();
-                    row.id = "r" + i;
-                    //row.Value = Convert.ToDecimal(entries[i]);
-                    //columnConstList.Item.
+                    var item = new pXMLTableColumnConstListItem();
+                    item.id = "i" + i;
+                    item.Value = entries[i];
+                    columnConstList.Item.Add(item);
                 }
+
+                p.ColumnConstList.Add(columnConstList);
             }
 
 
             // ColumnConst
+            p.ColumnConst = new List<pXMLTableColumnConst>();
+            IEnumerable<KeyValuePair<string, JToken>> columnConsts = (JObject)root.SelectToken("constants");
+            foreach (KeyValuePair<string, JToken> kvp in columnConsts)
+            {
+                var columnConst = new pXMLTableColumnConst();
+                // "decompress" attribute
+                string[] attrSeq    = ((JArray)kvp.Value.SelectToken("attr")).ToObject<string[]>();
+                columnConst.dataType= attrSeq[0];
+                columnConst.unit    = attrSeq[1];
+                columnConst.name    = attrSeq[2];
+                columnConst.id      = attrSeq[3];
+                columnConst.visible = Convert.ToByte(Int32.Parse(attrSeq[4]));
+                columnConst.context = attrSeq[5];
+                columnConst.index   = Convert.ToByte(Int32.Parse(attrSeq[6]));
+                columnConst.desc    = kvp.Key;
 
-
+                // reconstruct value
+                string[] entries    = ((JArray)kvp.Value.SelectToken("entries")).ToObject<string[]>();
+                columnConst.Value   = entries[0];
+                p.ColumnConst.Add(columnConst);
+            }
+            
             // ColumnCalc
+            p.ColumnCalc = new List<pXMLTableColumnCalc>();
+            IEnumerable<KeyValuePair<string, JToken>> columnCalcs = (JObject)root.SelectToken("calculations");
+            foreach (KeyValuePair<string, JToken> kvp in columnCalcs)
+            {
+                var columnCalc = new pXMLTableColumnCalc();
+                // "decompress" attribute
+                string[] attrSeq = ((JArray)kvp.Value.SelectToken("attr")).ToObject<string[]>();
+                columnCalc.dataType = attrSeq[0];
+                columnCalc.unit = attrSeq[1];
+                columnCalc.name = attrSeq[2];
+                columnCalc.id = attrSeq[3];
+                columnCalc.visible = Convert.ToByte(Int32.Parse(attrSeq[4]));
+                columnCalc.context = attrSeq[5];
+                columnCalc.index = Convert.ToByte(Int32.Parse(attrSeq[6]));
+                columnCalc.desc = kvp.Key;
 
-
+                // reconstruct value
+                string[] entries = ((JArray)kvp.Value.SelectToken("entries")).ToObject<string[]>();
+                columnCalc.Value = entries[0];
+                p.ColumnCalc.Add(columnCalc);
+            }
 
             return p;
         }
