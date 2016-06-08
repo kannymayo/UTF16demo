@@ -32,7 +32,7 @@ namespace ConsoleApplication1
             p.desc      = "Part Table";
             p.fixColumn = "C1";
             p.fileMigrate = "False"; // may not exist for every xml
-            p.version   = 1;
+            p.version   = 1.0M;
 
             // ColumnConstView
             p.ColumnConstView           = new pXMLTableColumnConstView();

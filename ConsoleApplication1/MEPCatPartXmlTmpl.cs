@@ -217,8 +217,13 @@ namespace ConsoleApplication1
                 System.Xml.XmlWriterSettings xmlWriterSettings = new System.Xml.XmlWriterSettings();
                 xmlWriterSettings.Encoding = encoding;
                 xmlWriterSettings.Indent = true;
+                // custom code
+                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                ns.Add("xlink", "http://www.w3.org/1999/xlink");
                 System.Xml.XmlWriter xmlWriter = XmlWriter.Create(memoryStream, xmlWriterSettings);
-                Serializer.Serialize(xmlWriter, this);
+                xmlWriter.WriteComment("(C) Copyright Autodesk, Inc. 1998-2012. All rights reserved.");
+                Serializer.Serialize(xmlWriter, this, ns);
+                // END custom code
                 memoryStream.Seek(0, System.IO.SeekOrigin.Begin);
                 streamReader = new System.IO.StreamReader(memoryStream, encoding);
                 return streamReader.ReadToEnd();
@@ -1258,7 +1263,7 @@ namespace ConsoleApplication1
             }
         }
 
-        [System.Xml.Serialization.XmlAttributeAttribute(Form = System.Xml.Schema.XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink", DataType = "anyURI")]
+        [System.Xml.Serialization.XmlAttributeAttribute(Form = System.Xml.Schema.XmlSchemaForm.Qualified, Namespace = "http://www.w3.org/1999/xlink")]
         public string href
         {
             get
